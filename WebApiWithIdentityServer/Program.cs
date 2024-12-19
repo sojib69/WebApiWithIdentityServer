@@ -65,11 +65,11 @@ namespace WebApiWithIdentityServer
                     {
                         AuthorizationCode = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("https://localhost:7191/connect/authorize"),
-                            TokenUrl = new Uri("https://localhost:7191/connect/token"),
+                            AuthorizationUrl = new Uri("https://localhost:5001/connect/authorize"),
+                            TokenUrl = new Uri("https://localhost:5001/connect/token"),
                             Scopes = new Dictionary<string, string>
                             {
-                                { "api1", "Access to My API" }
+                                { "scope2", "Access to My API" }
                             }
                         }
                     }
@@ -103,7 +103,7 @@ namespace WebApiWithIdentityServer
                                 Id = "oauth2"
                             }
                         },
-                        new[] { "api1" }
+                        new[] { "scope2" }
                     }
                 });
             });
@@ -122,10 +122,10 @@ namespace WebApiWithIdentityServer
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
 
                     // Configure OAuth2 login in Swagger UI
-                    options.OAuthClientId("client"); // Client ID defined in IdentityServer
-                    options.OAuthClientSecret("secret"); // Client Secret for the client
+                    options.OAuthClientId("interactive"); // Client ID defined in IdentityServer
+                    options.OAuthClientSecret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0"); // Client Secret for the client
                     options.OAuthUsePkce(); // Enable Proof Key for Code Exchange (PKCE)
-                    options.OAuthScopes("api1");
+                    options.OAuthScopes("scope2");
                 });
             }
 
