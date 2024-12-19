@@ -5,37 +5,34 @@ namespace WebApiWithIdentityServer.Configurations
     public class IdentityServerConfig
     {
         public static IEnumerable<IdentityResource> IdentityResources =>
-        new List<IdentityResource>
-        {
+        [
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
-        };
+        ];
 
         public static IEnumerable<ApiScope> ApiScopes =>
-            new List<ApiScope>
-            {
-            new ApiScope("api1", "My API")
-            };
+            [
+                new ApiScope("api1", "My API")
+            ];
 
         public static IEnumerable<ApiResource> ApiResources =>
-            new List<ApiResource>
-            {
-                new ApiResource("api1")
+            [
+                new ApiResource("api1", "My API")
                 {
                     Scopes = { "api1" }
                 }
-            };
+            ];
 
         public static IEnumerable<Client> Clients =>
-            new List<Client>
-            {
-            new Client
-            {
-                ClientId = "client",
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
-                ClientSecrets = { new Secret("secret".Sha256()) },
-                AllowedScopes = { "api1" }
-            }
-            };
+            [
+                new Client() {
+                    ClientId = "client",
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris = { "https://localhost:5001/swagger/oauth2-redirect.html" }, // Redirect URI for Swagger
+                    AllowedScopes = { "api1" },
+                    RequirePkce = true,
+                }
+            ];
     }
 }
