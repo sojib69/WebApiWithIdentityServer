@@ -1,4 +1,5 @@
-using Duende.IdentityServer;
+using IdentityServer.Pages;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 
 namespace IdentityServer
@@ -9,8 +10,20 @@ namespace IdentityServer
         {
             builder.Services.AddRazorPages();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSwaggerUI", policy =>
+                {
+                    policy.WithOrigins("https://localhost:7191") // Replace with your Swagger origin
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             var isBuilder = builder.Services.AddIdentityServer(options =>
                 {
+                    options.Authentication.CookieAuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Use cookies for interactive logins
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
@@ -22,6 +35,7 @@ namespace IdentityServer
                 .AddTestUsers(TestUsers.Users);
 
             // in-memory, code config
+            isBuilder.AddDeveloperSigningCredential();
             isBuilder.AddInMemoryIdentityResources(Config.IdentityResources);
             isBuilder.AddInMemoryApiScopes(Config.ApiScopes);
             isBuilder.AddInMemoryClients(Config.Clients);
@@ -40,17 +54,9 @@ namespace IdentityServer
             //    options.Conventions.AuthorizeFolder("/ServerSideSessions", "admin"));
 
 
-            builder.Services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to https://localhost:5001/signin-google
-                    options.ClientId = "copy client ID from Google here";
-                    options.ClientSecret = "copy client secret from Google here";
-                });
+            // Add authentication services
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) // Default to cookies
+                .AddCookie(); // Use cookies for authentication
 
             return builder.Build();
         }
@@ -63,6 +69,8 @@ namespace IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("AllowSwaggerUI"); // Add this before IdentityServer middleware
 
             app.UseStaticFiles();
             app.UseRouting();

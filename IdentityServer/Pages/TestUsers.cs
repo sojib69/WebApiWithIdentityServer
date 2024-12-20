@@ -7,7 +7,7 @@ using IdentityModel;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace IdentityServer
+namespace IdentityServer.Pages
 {
     public static class TestUsers
     {
@@ -23,13 +23,13 @@ namespace IdentityServer
                     country = "Germany"
                 };
 
-                return new List<TestUser>
-                {
+                return
+                [
                     new TestUser
                     {
                         SubjectId = "1",
-                        Username = "alice",
-                        Password = "alice",
+                        Username = "Test1",
+                        Password = "Password@321",
                         Claims =
                         {
                             new Claim(JwtClaimTypes.Name, "Alice Smith"),
@@ -44,8 +44,8 @@ namespace IdentityServer
                     new TestUser
                     {
                         SubjectId = "2",
-                        Username = "bob",
-                        Password = "bob",
+                        Username = "Test2",
+                        Password = "Password@321",
                         Claims =
                         {
                             new Claim(JwtClaimTypes.Name, "Bob Smith"),
@@ -57,7 +57,7 @@ namespace IdentityServer
                             new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
                         }
                     }
-                };
+                ];
             }
         }
     }
